@@ -598,8 +598,12 @@ module Puppet
       super(args)
 
       if @@usecidr == nil
-        iptablesversion = `#{@@iptables_dir}/iptables --version`.scan(/ v([0-9\.]+)/)
-        iptablesversion = iptablesversion[0][0].split(".")
+        begin
+          iptablesversion = `#{@@iptables_dir}/iptables --version`.scan(/ v([0-9\.]+)/)
+          iptablesversion = iptablesversion[0][0].split(".")
+        rescue
+          iptablesversion = [0, 0, 0]
+        end
         if iptablesversion[0].to_i < 2 and iptablesversion[1].to_i < 4
           @@usecidr = false
         else
